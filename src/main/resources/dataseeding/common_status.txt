@@ -1,0 +1,15 @@
+description:Created,status:1,name:Created,categoryName:SB
+description:Approved,status:1,name:Approved,categoryName:SB
+description:Rejected,status:1,name:Rejected,categoryName:SB
+description:Submission for approval,status:1,name:Submission for approval,categoryName:SB
+description:Request for resubmission,status:1,name:Request for resubmission,categoryName:SB
+description:Inactive,status:1,name:Inactive,categoryName:SB
+description:Dormant,status:1,name:Dormant,categoryName:SB
+description:Paid,status:1,name:Paid,categoryName:SB
+description:Not Paid,status:1,name:Not Paid,categoryName:SB
+description:Cheque Used,status:1,name:Cheque Used
+description:Cheque Not Used,status:1,name:Cheque Not Used
+description:Request For Block,status:1,name:Request For Block
+description:Request For UnBlock,status:1,name:Request For UnBlock
+description:Approve For Block,status:1,name:Approve For Block
+description:Approve For UnBlock,status:1,name:Approve For UnBlock
