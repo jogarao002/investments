@@ -3,6 +3,7 @@ package com.intellect.investmentsms.service.impl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
 
 import java.util.Optional;
@@ -10,9 +11,11 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.intellect.investmentsms.domain.CardRates;
@@ -23,6 +26,7 @@ import com.intellect.investmentsms.service.dto.CardRatesDTO;
 import com.intellect.investmentsms.service.mapper.CardRatesMapper;
 
 @SpringBootTest(classes = { TestCardRatesServiceImpl.class })
+@ExtendWith(MockitoExtension.class)
 public class TestCardRatesServiceImpl {
 
 	@Mock
@@ -45,6 +49,8 @@ public class TestCardRatesServiceImpl {
 	public void setUp() {
 		MockitoAnnotations.openMocks(this);
 
+	    cardRatesServiceImpl = new CardRatesServiceImpl(cardRatesRepository, cardRatesMapper, commonStatusRepository);
+		
 		// Initialize test data
 		cardRates = new CardRates();
 		cardRates.setId(1L);
@@ -82,16 +88,14 @@ public class TestCardRatesServiceImpl {
 	@Test
 	public void test_findOne() {
 		// Mock repository methods
-		when(cardRatesRepository.findById(1L)).thenReturn(Optional.of(cardRates));
+		when(cardRatesRepository.findById(anyLong())).thenReturn(Optional.of(cardRates));
 		when(cardRatesMapper.toDto(cardRates)).thenReturn(cardRatesDTO);
-		when(commonStatusRepository.findById(1L)).thenReturn(Optional.of(commonStatus));
+		when(commonStatusRepository.findById(anyLong())).thenReturn(Optional.of(commonStatus));
 
-		// Call the service method
 		CardRatesDTO resultDTO = cardRatesServiceImpl.findOne(1L);
 
-		// Verify the result
-		// assertNotNull(resultDTO);
-		assertEquals(1L, resultDTO.getId());
+		assertNotNull(resultDTO);
+		assertEquals(cardRatesDTO.getId(), resultDTO.getId());
 		assertEquals(cardRatesDTO.getPacsId(), resultDTO.getPacsId());
 		assertEquals(cardRatesDTO.getTenureType(), resultDTO.getTenureType());
 		assertEquals(cardRatesDTO.getMinTenure(), resultDTO.getMinTenure());
@@ -104,9 +108,7 @@ public class TestCardRatesServiceImpl {
 		assertEquals(cardRatesDTO.getEffectiveEndDate(), resultDTO.getEffectiveEndDate());
 		assertEquals(cardRatesDTO.getStatus(), resultDTO.getStatus());
 		assertEquals(cardRatesDTO.getStatusName(), resultDTO.getStatusName());
-		// assertEquals(cardRatesDTO, cardRatesServiceImpl.findOne(1L));
 
-		// Verify that repository methods were called
 		verify(cardRatesRepository).findById(1L);
 		verify(commonStatusRepository).findById(1L);
 	}

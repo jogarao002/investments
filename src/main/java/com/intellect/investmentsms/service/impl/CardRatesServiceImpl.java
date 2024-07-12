@@ -34,14 +34,14 @@ public class CardRatesServiceImpl implements CardRatesService {
 	private final CardRatesMapper cardRatesMapper;
 
 	@Autowired
-	private CommonStatusRepository commonStatusRepository;
-
-	@Autowired
 	private ProductRepository productRepository;
 
-	public CardRatesServiceImpl(CardRatesRepository cardRatesRepository, CardRatesMapper cardRatesMapper) {
+	private final CommonStatusRepository commonStatusRepository;
+
+	public CardRatesServiceImpl(CardRatesRepository cardRatesRepository, CardRatesMapper cardRatesMapper, CommonStatusRepository commonStatusRepository) {
 		this.cardRatesRepository = cardRatesRepository;
 		this.cardRatesMapper = cardRatesMapper;
+		this.commonStatusRepository = commonStatusRepository;
 	}
 
 	@Override
