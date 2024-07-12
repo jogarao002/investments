@@ -2,12 +2,13 @@ package com.intellect.investmentsms.service.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -28,58 +29,85 @@ public class TestCardRatesServiceImpl {
 	private CardRatesRepository cardRatesRepository;
 
 	@Mock
-	private CommonStatusRepository commonStatusRepository;
-
-	@Mock
 	private CardRatesMapper cardRatesMapper;
 
+	@Mock
+	private CommonStatusRepository commonStatusRepository;
+
 	@InjectMocks
-	private CardRatesServiceImpl cardRatesServiceImpl;
+	CardRatesServiceImpl cardRatesServiceImpl;
 
 	private CardRates cardRates;
+	private CardRatesDTO cardRatesDTO;
 	private CommonStatus commonStatus;
 
 	@BeforeEach
 	public void setUp() {
 		MockitoAnnotations.openMocks(this);
 
-		// Mock data setup
+		// Initialize test data
 		cardRates = new CardRates();
 		cardRates.setId(1L);
-		cardRates.setStatus(1); // Assuming status field is set
+		cardRates.setPacsId(123L);
+		cardRates.setTenureType(1);
+		cardRates.setMinTenure(6);
+		cardRates.setMaxTenure(12);
+		cardRates.setGeneralRoi(5.5f);
+		cardRates.setStaffRoi(6.0f);
+		cardRates.setSeniorcitizenRoi(5.0f);
+		cardRates.setPenalRoi(7.5f);
+		cardRates.setEffectiveStartDate(System.currentTimeMillis());
+		cardRates.setEffectiveEndDate(System.currentTimeMillis() + 86400000);
+		cardRates.setStatus(1);
+
+		cardRatesDTO = new CardRatesDTO();
+		cardRatesDTO.setId(1L);
+		cardRatesDTO.setPacsId(123L);
+		cardRatesDTO.setTenureType(1);
+		cardRatesDTO.setMinTenure(6);
+		cardRatesDTO.setMaxTenure(12);
+		cardRatesDTO.setGeneralRoi(5.5f);
+		cardRatesDTO.setStaffRoi(6.0f);
+		cardRatesDTO.setSeniorcitizenRoi(5.0f);
+		cardRatesDTO.setPenalRoi(7.5f);
+		cardRatesDTO.setEffectiveStartDate(cardRates.getEffectiveStartDate());
+		cardRatesDTO.setEffectiveEndDate(cardRates.getEffectiveEndDate());
+		cardRatesDTO.setStatus(1);
 
 		commonStatus = new CommonStatus();
 		commonStatus.setId(1L);
 		commonStatus.setName("Active");
-
-		// Stubbing repository methods
-		when(cardRatesRepository.findById(anyLong())).thenReturn(Optional.of(cardRates));
-		when(commonStatusRepository.findById(anyLong())).thenReturn(Optional.of(commonStatus));
-
-		// Stubbing mapper method
-		when(cardRatesMapper.toDto(cardRates)).thenReturn(createCardRatesDTO(cardRates, commonStatus));
 	}
 
 	@Test
-	public void testFindOne() {
-		Long id = 1L;
-		CardRatesDTO cardRatesDTO = cardRatesServiceImpl.findOne(id);
+	public void test_findOne() {
+		// Mock repository methods
+		when(cardRatesRepository.findById(1L)).thenReturn(Optional.of(cardRates));
+		when(cardRatesMapper.toDto(cardRates)).thenReturn(cardRatesDTO);
+		when(commonStatusRepository.findById(1L)).thenReturn(Optional.of(commonStatus));
 
-		// Asserting that cardRatesDTO is not null before accessing its properties
-		assertNotNull(cardRatesDTO, "CardRatesDTO should not be null");
+		// Call the service method
+		CardRatesDTO resultDTO = cardRatesServiceImpl.findOne(1L);
 
-		// Asserting specific properties of cardRatesDTO
-		assertEquals(cardRates.getId(), cardRatesDTO.getId());
-		// Add more assertions for other fields if necessary
+		// Verify the result
+		// assertNotNull(resultDTO);
+		assertEquals(1L, resultDTO.getId());
+		assertEquals(cardRatesDTO.getPacsId(), resultDTO.getPacsId());
+		assertEquals(cardRatesDTO.getTenureType(), resultDTO.getTenureType());
+		assertEquals(cardRatesDTO.getMinTenure(), resultDTO.getMinTenure());
+		assertEquals(cardRatesDTO.getMaxTenure(), resultDTO.getMaxTenure());
+		assertEquals(cardRatesDTO.getGeneralRoi(), resultDTO.getGeneralRoi());
+		assertEquals(cardRatesDTO.getStaffRoi(), resultDTO.getStaffRoi());
+		assertEquals(cardRatesDTO.getSeniorcitizenRoi(), resultDTO.getSeniorcitizenRoi());
+		assertEquals(cardRatesDTO.getPenalRoi(), resultDTO.getPenalRoi());
+		assertEquals(cardRatesDTO.getEffectiveStartDate(), resultDTO.getEffectiveStartDate());
+		assertEquals(cardRatesDTO.getEffectiveEndDate(), resultDTO.getEffectiveEndDate());
+		assertEquals(cardRatesDTO.getStatus(), resultDTO.getStatus());
+		assertEquals(cardRatesDTO.getStatusName(), resultDTO.getStatusName());
+		// assertEquals(cardRatesDTO, cardRatesServiceImpl.findOne(1L));
+
+		// Verify that repository methods were called
+		verify(cardRatesRepository).findById(1L);
+		verify(commonStatusRepository).findById(1L);
 	}
-
-	// Helper method to create CardRatesDTO with status name
-	private CardRatesDTO createCardRatesDTO(CardRates cardRates, CommonStatus commonStatus) {
-		CardRatesDTO cardRatesDTO = new CardRatesDTO();
-		cardRatesDTO.setId(cardRates.getId());
-		cardRatesDTO.setStatus(cardRates.getStatus()); // Assuming status is mapped
-		cardRatesDTO.setStatusName(commonStatus.getName());
-		return cardRatesDTO;
-	}
-
 }
