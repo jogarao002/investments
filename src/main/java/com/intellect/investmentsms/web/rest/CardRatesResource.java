@@ -31,11 +31,9 @@ public class CardRatesResource {
 
 	private final CardRatesService cardRatesService;
 
-	private final CardRatesRepository cardRatesRepository;
 
-	public CardRatesResource(CardRatesService cardRatesService, CardRatesRepository cardRatesRepository) {
+	public CardRatesResource(CardRatesService cardRatesService) {
 		this.cardRatesService = cardRatesService;
-		this.cardRatesRepository = cardRatesRepository;
 	}
 
 	@PostMapping("/add")

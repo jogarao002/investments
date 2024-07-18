@@ -1,31 +1,40 @@
 package com.intellect.investmentsms.util;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 import org.springframework.core.env.AbstractEnvironment;
 
 import com.intellect.investmentsms.InvestmentsMsApplication;
 
+
 public class ApplicationConstants {
 	static Properties prop = new Properties();
-	static {
-		try {
-			prop.load(InvestmentsMsApplication.class.getClassLoader().getResourceAsStream("constant.properties"));
-		} catch (IOException ex) {
-		}
-	}
-
 	static Properties properties = new Properties();
-
 	static {
-		try {
-			properties.load(InvestmentsMsApplication.class.getClassLoader()
-//					.getResourceAsStream("config/application-" + "dev" + ".properties"));
-					.getResourceAsStream("config/application-"
-							+ System.getProperty(AbstractEnvironment.ACTIVE_PROFILES_PROPERTY_NAME) + ".properties"));
-		} catch (IOException ex) {
-		}
+	    try {
+	        InputStream inStream = InvestmentsMsApplication.class.getClassLoader().getResourceAsStream("constant.properties");
+	        if (inStream == null) {
+	            System.err.println("constant.properties file not found");
+	        } else {
+	            prop.load(inStream);
+	        }
+	    } catch (IOException ex) {
+	        System.err.println("Error loading constant.properties: " + ex.getMessage());
+	    }
+	    
+	    try {
+	        InputStream inStream = InvestmentsMsApplication.class.getClassLoader()
+	               .getResourceAsStream("config/application-dev" + System.getProperty(AbstractEnvironment.ACTIVE_PROFILES_PROPERTY_NAME) + ".properties");
+	        if (inStream == null) {
+	            System.err.println("application-dev.properties file not found");
+	        } else {
+	            properties.load(inStream);
+	        }
+	    } catch (IOException ex) {
+	        System.err.println("Error loading application.properties: " + ex.getMessage());
+	    }
 	}
 	public static final String HEADER_USERID = prop.getProperty("HEADER_USERID");
 

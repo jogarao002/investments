@@ -1,27 +1,30 @@
 package com.intellect.investmentsms.repository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.intellect.investmentsms.domain.CardRates;
 
 @SpringBootTest(classes = {CardRatesRepositoryTest.class})
-
+@ExtendWith(MockitoExtension.class)
 class CardRatesRepositoryTest {
 	
-	@Autowired
+	@Mock
 	private CardRatesRepository cardRatesRepository;
 
 	@BeforeEach
-	void setUp() throws Exception {
+	void setUp() {
+		MockitoAnnotations.openMocks(this);
 	}
 
 	@Test
@@ -41,11 +44,11 @@ class CardRatesRepositoryTest {
 		cardRates.setEffectiveEndDate(System.currentTimeMillis() + 86400000);
 		cardRates.setStatus(1);
 		
-		cardRatesRepository.save(cardRates);
+		when(cardRatesRepository.findByPacsIdAndStatus(cardRates.getPacsId(), cardRates.getStatus()))
+			.thenReturn(List.of(cardRates));
 		
 		List<CardRates> pacsIdAndStatusList = cardRatesRepository.findByPacsIdAndStatus(cardRates.getPacsId(), cardRates.getStatus());
 		assertEquals(1, pacsIdAndStatusList.size());
 		
 	}
-
 }

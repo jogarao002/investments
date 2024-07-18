@@ -38,4 +38,5 @@ public class ResponseObject {
 	public String toString() {
 		return "ResponseObject [status=" + status + ", statusMsg=" + statusMsg + ", data=" + data + "]";
 	}
+
 }
