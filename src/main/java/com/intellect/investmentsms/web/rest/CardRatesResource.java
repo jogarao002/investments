@@ -49,10 +49,10 @@ public class CardRatesResource {
 			}
 			result = cardRatesService.save(cardRatesDTO);
 			data = new ArrayList<>();
-			data.add(result);
+			data.add(result); 
 		} catch (InvestmentsBusinessException e) {
 			return InvestmentsResponseUtil.buildResponse(ApplicationConstants.RES_STATUS_ERROR,
-					ApplicationConstants.CARD_RATES + ApplicationConstants.CREATE_RECORD_FAILED + "," + e.getMessage(),
+					ApplicationConstants.CARD_RATES + ApplicationConstants.CREATE_RECORD_FAILED + "," + e.getMessage(), 
 					data);
 		} catch (Exception e) {
 			return InvestmentsResponseUtil.buildResponse(ApplicationConstants.RES_STATUS_ERROR,
@@ -66,7 +66,7 @@ public class CardRatesResource {
 	public ResponseObject updateCardRates(@RequestHeader(required = true) Long userid,
 			@RequestHeader(required = true) String authToken, @RequestBody CardRatesDTO cardRatesDTO)
 			throws URISyntaxException {
-		List<CardRatesDTO> data = null;
+		List<CardRatesDTO> data = null; 
 		CardRatesDTO result = null;
 		try {
 			if (cardRatesDTO.getId() == null) {
@@ -118,12 +118,12 @@ public class CardRatesResource {
 					ApplicationConstants.CARD_RATES + ApplicationConstants.FETCH_RECORD_FAILED, data);
 		} catch (Exception e) {
 			return InvestmentsResponseUtil.buildResponse(ApplicationConstants.RES_STATUS_ERROR,
-					ApplicationConstants.SERVER_ERROR, null);
+					ApplicationConstants.SERVER_ERROR, null); 
 		}
 		return InvestmentsResponseUtil.buildResponse(ApplicationConstants.RES_STATUS_SUCCESS,
 				ApplicationConstants.CARD_RATES + ApplicationConstants.FETCH_RECORD_SUCESS, data);
 	}
-
+ 
 	@DeleteMapping("/remove")
 	public ResponseObject deleteCardRate(@RequestHeader(required = true) Long userid,
 			@RequestHeader(required = true) String authToken, @RequestHeader(required = true) Long id) {

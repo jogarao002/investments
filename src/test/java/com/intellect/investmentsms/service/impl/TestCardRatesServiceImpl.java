@@ -2,6 +2,7 @@ package com.intellect.investmentsms.service.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
@@ -56,6 +57,8 @@ public class TestCardRatesServiceImpl {
 		
 		// Initialize test data
 		cardRates = new CardRates();
+		cardRates.setCreatedBy(75548514L);
+        cardRates.setCreatedOn(758158212L);
 		cardRates.setId(1L);
 		cardRates.setPacsId(123L);
 		cardRates.setTenureType(1);
@@ -70,6 +73,8 @@ public class TestCardRatesServiceImpl {
 		cardRates.setStatus(1);
 
 		cardRatesDTO = new CardRatesDTO();
+		cardRatesDTO.setCreatedBy(75548514L);
+        cardRatesDTO.setCreatedOn(758158212L);
 		cardRatesDTO.setId(1L);
 		cardRatesDTO.setPacsId(123L);
 		cardRatesDTO.setTenureType(1);
@@ -144,32 +149,18 @@ public class TestCardRatesServiceImpl {
 		for (int i = 0; i < cardRatesList.size(); i++) {
 
             CardRates cardRatesIndexList = cardRatesList.get(i);
-
             CardRatesDTO cardRatesDTOIndexList = cardRatesDTOList.get(i);
-
-
             assertEquals(cardRatesIndexList.getId(), cardRatesDTOIndexList.getId());
-
             assertEquals(cardRatesIndexList.getPacsId(), cardRatesDTOIndexList.getPacsId());
-
             assertEquals(cardRatesIndexList.getTenureType(), cardRatesDTOIndexList.getTenureType());
-
             assertEquals(cardRatesIndexList.getMinTenure(), cardRatesDTOIndexList.getMinTenure());
-
             assertEquals(cardRatesIndexList.getMaxTenure(), cardRatesDTOIndexList.getMaxTenure());
-
             assertEquals(cardRatesIndexList.getGeneralRoi(), cardRatesDTOIndexList.getGeneralRoi());
-
             assertEquals(cardRatesIndexList.getStaffRoi(), cardRatesDTOIndexList.getStaffRoi());
-
             assertEquals(cardRatesIndexList.getSeniorcitizenRoi(), cardRatesDTOIndexList.getSeniorcitizenRoi());
-
             assertEquals(cardRatesIndexList.getPenalRoi(), cardRatesDTOIndexList.getPenalRoi());
-
             assertEquals(cardRatesIndexList.getEffectiveStartDate(), cardRatesDTOIndexList.getEffectiveStartDate());
-
             assertEquals(cardRatesIndexList.getEffectiveEndDate(), cardRatesDTOIndexList.getEffectiveEndDate());
-
             assertEquals(cardRatesIndexList.getStatus(), cardRatesDTOIndexList.getStatus());
 
         }
@@ -179,6 +170,7 @@ public class TestCardRatesServiceImpl {
 		assertEquals(cardRatesDTOList.size(), result.size());
 		
 	}
+	
 	
 	@Test
 	public void testSave() throws InvestmentsBusinessException {
@@ -204,4 +196,5 @@ public class TestCardRatesServiceImpl {
 		assertEquals(cardRatesDTO.getStatusName(), resultDTO.getStatusName());
 		
 	}
+	
 }

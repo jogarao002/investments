@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.intellect.investmentsms.domain.CardRates;
+import com.intellect.investmentsms.exception.InvestmentsBusinessException;
 
 @SpringBootTest(classes = {CardRatesRepositoryTest.class})
 @ExtendWith(MockitoExtension.class)
@@ -51,4 +52,6 @@ class CardRatesRepositoryTest {
 		assertEquals(1, pacsIdAndStatusList.size());
 		
 	}
+	
+	
 }

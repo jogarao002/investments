@@ -1,8 +1,13 @@
 package com.intellect.investmentsms.web.rest;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.matches;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 import java.util.ArrayList;
@@ -21,6 +26,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intellect.investmentsms.exception.InvestmentsBusinessException;
 import com.intellect.investmentsms.service.CardRatesService;
 import com.intellect.investmentsms.service.dto.CardRatesDTO;
@@ -109,12 +115,14 @@ public class CardRatesResourceTest {
                 .header("authToken", "authToken")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status", is("SUCCESS")))
+				.andExpect(jsonPath("$.statusMsg", is("Card Rate(s) Fetch Successfully")))
                 .andDo(print());
     }
     
     @Test
     public void testGetCardRate_InvestmentsBusinessException() throws Exception {
-        Long id = 1L;
+        Long id = 1L; 
 
         when(cardRatesService.findOne(id)).thenThrow(new InvestmentsBusinessException("Error message"));
 
@@ -123,8 +131,9 @@ public class CardRatesResourceTest {
                 .header("userid", "1")
                 .header("authToken", "authToken")
                 .contentType(MediaType.APPLICATION_JSON))
-                //.andExpect(status().isInternalServerError())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status", is("ERROR"))) 
+				.andExpect(jsonPath("$.statusMsg", is("Card Rate(s) Fetch Failed")))
                 .andDo(print());
     }
     
@@ -139,8 +148,9 @@ public class CardRatesResourceTest {
                 .header("userid", "1")
                 .header("authToken", "authToken")
                 .contentType(MediaType.APPLICATION_JSON))
-                //.andExpect(status().isInternalServerError())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status", is("ERROR")))
+				.andExpect(jsonPath("$.statusMsg", is("Internal server error")))
                 .andDo(print());
     }
     
@@ -151,8 +161,97 @@ public class CardRatesResourceTest {
     			.header("userid", "1")
     			.header("authToken", "authToken")
     			.contentType(MediaType.APPLICATION_JSON))
-    			//.andExpect(status().isInternalServerError())
     			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+    			.andExpect(jsonPath("$.status", is("SUCCESS")))
+				.andExpect(jsonPath("$.statusMsg", is("Card Rate(s) Fetch Successfully")))
     			.andDo(print());
     }
+    
+    @Test
+    public void testGetAllCardRates_InvestmentsBusinessException() throws Exception {
+    	when(cardRatesService.findAll()).thenThrow(new InvestmentsBusinessException("Error message"));
+    	this.mockMvc.perform(get("/card_rates/get_all")
+    			.header("userid", "1")
+    			.header("authToken", "authToken")
+    			.contentType(MediaType.APPLICATION_JSON))
+    			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+    			.andExpect(jsonPath("$.status", is("ERROR")))
+				.andExpect(jsonPath("$.statusMsg", is("Card Rate(s) Fetch Failed")))
+    			.andDo(print());
+    }
+    
+    @Test
+    public void testGetAllCardRates_GeneralException() throws Exception{
+    	when(cardRatesService.findAll()).thenThrow(new RuntimeException("Error message"));
+    	this.mockMvc.perform(get("/card_rates/get_all")
+    			.header("userid", "1")
+    			.header("authToken", "authToken")
+    			.contentType(MediaType.APPLICATION_JSON))
+    			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+    			.andExpect(jsonPath("$.status", is("ERROR")))
+				.andExpect(jsonPath("$.statusMsg", is("Internal server error")))
+    			.andDo(print());
+    }
+    
+	@Test
+    public void testCreateCardRates() throws Exception {
+		CardRatesDTO cardRateDTO = new CardRatesDTO();
+		cardRateDTO.setPacsId(123L);
+		cardRateDTO.setTenureType(1);
+		cardRateDTO.setMinTenure(6);
+		cardRateDTO.setMaxTenure(12);
+		cardRateDTO.setGeneralRoi(5.5f);
+		cardRateDTO.setStaffRoi(6.0f);
+		cardRateDTO.setSeniorcitizenRoi(5.0f);
+		cardRateDTO.setPenalRoi(7.5f);
+		cardRateDTO.setEffectiveStartDate(System.currentTimeMillis());
+		cardRateDTO.setEffectiveEndDate(System.currentTimeMillis() + 86400000);
+		cardRateDTO.setStatus(1); 
+		
+		when(cardRatesService.save(any(CardRatesDTO.class))).thenReturn(cardRatesDTO);
+    	ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(cardRateDTO);
+        byte[] jsonBytes = json.getBytes("UTF-8");
+    	this.mockMvc.perform(post("/card_rates/add")
+    			.header("userId", 1L)
+    			.header("authToken", "authToken")
+    			.content(jsonBytes)
+    			.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.status", is("SUCCESS")))
+				.andExpect(jsonPath("$.statusMsg", is("Card Rate(s) Created Successfully")))
+				.andDo(print());
+    }
+	
+	@Test
+	public void testCreateCardRates_InvestmentsBusinessException() throws Exception {
+		CardRatesDTO cardRateDTO = new CardRatesDTO();
+		cardRateDTO.setPacsId(123L);
+		cardRateDTO.setTenureType(1);
+		cardRateDTO.setMinTenure(6);
+		cardRateDTO.setMaxTenure(12);
+		cardRateDTO.setGeneralRoi(5.5f);
+		cardRateDTO.setStaffRoi(6.0f);
+		cardRateDTO.setSeniorcitizenRoi(5.0f);
+		cardRateDTO.setPenalRoi(7.5f);
+		cardRateDTO.setEffectiveStartDate(System.currentTimeMillis());
+		cardRateDTO.setEffectiveEndDate(System.currentTimeMillis() + 86400000);
+		cardRateDTO.setStatus(1); 
+		
+		ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(cardRateDTO);
+        byte[] jsonBytes = json.getBytes("UTF-8");
+		
+	    when(cardRatesService.save(any(CardRatesDTO.class))).thenThrow(new InvestmentsBusinessException("Error message"));
+	    this.mockMvc.perform(post("/card_rates/add")
+	           .header("userId", 1L)
+	           .header("authToken", "authToken")
+	           .content(jsonBytes)
+	           .contentType(MediaType.APPLICATION_JSON))
+	           .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+	           .andExpect(jsonPath("$.status", is("ERROR")))
+	           .andExpect(jsonPath("$.statusMsg").value("Card Rate(s) Create Failed,Error message"))
+	           .andDo(print());
+
+	}
 }
